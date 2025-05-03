@@ -1,1 +1,1 @@
-CHECK IT HERE: https://mother-day.streamlit.app/
+CHECK IT HERE: https://mothers-day.streamlit.app/
