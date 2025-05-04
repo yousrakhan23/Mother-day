@@ -3,15 +3,35 @@ import time
 from PIL import Image
 import base64
 
-
 # Set page config
 st.set_page_config(page_title="Mother's Day Love", page_icon="🌸", layout="centered")
 
-# Custom CSS for gorgeous UI
+# Function to encode image to base64
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        encoded = base64.b64encode(img_file.read()).decode()
+    return f"data:image/jpeg;base64,{encoded}"
+
+# Function to autoplay audio
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <audio autoplay loop>
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            </audio>
+        """
+        st.markdown(md, unsafe_allow_html=True)
+
+# Load base64 image once
+base64_img = get_base64_image("mama.jpg")
+
+# Custom CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600&display=swap');
-    
+
     body {
         background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%);
         font-family: 'Montserrat', sans-serif;
@@ -32,7 +52,7 @@ st.markdown("""
         cursor: pointer;
         border-radius: 15px;
         box-shadow: 0 15px 35px rgba(233, 30, 99, 0.2);
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.5s ease;
         z-index: 10;
     }
     .envelope:hover {
@@ -158,9 +178,6 @@ st.markdown("""
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(255, 107, 129, 0.6);
     }
-    .btn-primary:active {
-        transform: translateY(1px);
-    }
     .music-note {
         position: fixed;
         bottom: 20px;
@@ -176,24 +193,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Function to autoplay audio
-def autoplay_audio(file_path: str):
-    with open(file_path, "rb") as f:
-        data = f.read()
-        b64 = base64.b64encode(data).decode()
-        md = f"""
-            <audio autoplay loop>
-            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-            </audio>
-            """
-        st.markdown(
-            md,
-            unsafe_allow_html=True,
-        )
-
-# Main title with animation
+# Main heading
 st.markdown("""
-    <h1 style='text-align: center; color: #d63384; font-family: "Dancing Script", cursive; 
+    <h1 style='text-align: center; color: #d63384; font-family: "Dancing Script", cursive;
     animation: fadeIn 2s forwards; margin-bottom: 10px;'>
     🌸 A Special Mother's Day Gift 🌸
     </h1>
@@ -201,7 +203,7 @@ st.markdown("""
     Click on the envelope to reveal your surprise</p>
 """, unsafe_allow_html=True)
 
-# Envelope display
+# Envelope
 st.markdown("""
     <div class="container">
         <div class="envelope" id="envelope">
@@ -210,32 +212,31 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Button to open
+# Open button
 clicked = st.button("💖 Open Your Gift 💖", key="open_btn", help="Click to reveal your special message")
 
-# When clicked show message + hearts + images
 if clicked:
-    # Play background music
+    # Background music
     try:
-        autoplay_audio("audio.mp3")  
+        autoplay_audio("audio.mp3")
         st.markdown('<div class="music-note">🎵</div>', unsafe_allow_html=True)
     except:
         pass
-    
-    # Add envelope open class
+
+    # JS to open envelope flap
     st.markdown("""
         <script>
         document.getElementById('envelope').classList.add('open');
         </script>
     """, unsafe_allow_html=True)
-    
-    time.sleep(1)  # Wait for animation
-    
-    # Show message with photo and signature
-    st.markdown("""
+
+    time.sleep(1)
+
+    # Message box with image and message
+    st.markdown(f"""
         <div class="message-container show">
             <div class="photo-frame">
-                <img src="mama.jpg" alt="Mother">
+                <img src="{base64_img}" alt="Mother">
             </div>
             <h2 style="color: #d63384; font-family: 'Dancing Script', cursive; font-size: 32px;">
                 To The World's Best Mom
@@ -252,15 +253,15 @@ if clicked:
             <div class="signature">With all my love</div>
         </div>
     """, unsafe_allow_html=True)
-    
-    # Show floating hearts (15 hearts)
+
+    # Floating hearts
     for i in range(15):
         st.markdown(
             f'<div class="heart" style="left: {10 + (i * 6)}%; bottom: -20px; animation-duration: {5 + (i % 3)}s; animation-delay: {i * 0.2}s;"></div>',
             unsafe_allow_html=True
         )
-    
-    # Additional flowers animation
+
+    # Flower animation
     st.markdown("""
         <div style="text-align: center; margin-top: 20px; animation: fadeIn 2s forwards;">
             <span style="font-size: 30px; margin: 0 5px; animation: float 3s ease-in-out infinite;">🌼</span>
